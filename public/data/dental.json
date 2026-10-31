@@ -1,0 +1,176 @@
+{
+  "version": 1,
+  "voxelBox": {
+    "min": [
+      0.26875,
+      0.128125,
+      0.215
+    ],
+    "max": [
+      0.759375,
+      0.465625,
+      0.705
+    ]
+  },
+  "worldBoxMm": {
+    "min": [
+      43,
+      20.5,
+      21.5
+    ],
+    "max": [
+      121.5,
+      74.5,
+      70.5
+    ]
+  },
+  "hu": {
+    "toothMin": 1250,
+    "enamelMin": 2200,
+    "boneMin": 850
+  },
+  "stats": {
+    "method": "enamel-core (HU>=1900) connected components -> arch x/y extents; roots extended 14 mm in z; 3 mm x/y margin",
+    "voxelBounds": {
+      "x": [
+        86,
+        242
+      ],
+      "y": [
+        41,
+        148
+      ],
+      "z": [
+        43,
+        140
+      ]
+    },
+    "normalizedConvention": "UV/texture space: uv=(voxel+0.5)/dims for voxel centers, box faces at voxel boundaries; uv.x=volume x (right), uv.y=volume y (anterior->posterior), uv.z=volume z (inferior->superior)",
+    "dims": [
+      320,
+      320,
+      200
+    ],
+    "spacingMm": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "core": {
+      "thresholdHu": 1900,
+      "voxels": 6582,
+      "components": 28,
+      "bounds": {
+        "x": [
+          92,
+          236
+        ],
+        "y": [
+          47,
+          142
+        ],
+        "z": [
+          68,
+          115
+        ]
+      }
+    },
+    "occlusalPlane": {
+      "voxelZ": 89,
+      "normalizedZ": 0.445
+    },
+    "arch": {
+      "lower": {
+        "cejZ": 71,
+        "rootApexZ": 43
+      },
+      "upper": {
+        "cejZ": 112,
+        "rootApexZ": 140
+      }
+    },
+    "boxVoxels": 1661688,
+    "toothVoxels": 59668,
+    "enamelVoxels": 2403,
+    "dentitionBand": {
+      "z": [
+        65,
+        118
+      ],
+      "toothVoxelsBandSharePct": 82
+    },
+    "coreOutsideBox": 0,
+    "recommendedPreset": {
+      "name": "Teeth / Dental arch",
+      "mode": "composite",
+      "steps": 224,
+      "opacity": 1,
+      "densityMin": 0.28,
+      "stops": [
+        {
+          "hu": -1024,
+          "color": [
+            0.01,
+            0.01,
+            0.02
+          ],
+          "alpha": 0
+        },
+        {
+          "hu": 700,
+          "color": [
+            0.28,
+            0.23,
+            0.19
+          ],
+          "alpha": 0
+        },
+        {
+          "hu": 850,
+          "color": [
+            0.5,
+            0.42,
+            0.34
+          ],
+          "alpha": 0
+        },
+        {
+          "hu": 1250,
+          "color": [
+            0.9,
+            0.86,
+            0.78
+          ],
+          "alpha": 0.18
+        },
+        {
+          "hu": 1650,
+          "color": [
+            1,
+            0.98,
+            0.94
+          ],
+          "alpha": 0.65
+        },
+        {
+          "hu": 2200,
+          "color": [
+            1,
+            1,
+            1
+          ],
+          "alpha": 0.96
+        },
+        {
+          "hu": 3200,
+          "color": [
+            1,
+            1,
+            1
+          ],
+          "alpha": 1
+        }
+      ]
+    }
+  }
+}

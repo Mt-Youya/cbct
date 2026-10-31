@@ -1,0 +1,46 @@
+{
+  "name": "cbct-volume-viewer",
+  "version": "0.0.1",
+  "private": true,
+  "description": "WebGL2 CBCT volume viewer built with three.js, react-three-fiber, TypeScript and zustand",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --open --host",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "fmt": "oxfmt --write .",
+    "typecheck": "tsc -b",
+    "prepare-volume": "node scripts/prepare-volume.mjs",
+    "cf:login": "wrangler login",
+    "deploy:dry": "pnpm build && wrangler deploy --dry-run",
+    "deploy": "pnpm build && wrangler deploy"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
+    "dicom-parser": "^1.8.21",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "three": "^0.187.0",
+    "zustand": "^5.0.16"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.187.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "cf": "1.0.0-beta.26",
+    "oxfmt": "^0.74.0",
+    "oxlint": "^1.89.0",
+    "playwright-core": "^1.64.1",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9.3",
+    "vite": "^8.3.5",
+    "wrangler": "^4.156.0"
+  },
+  "packageManager": "pnpm@12.16.1"
+}

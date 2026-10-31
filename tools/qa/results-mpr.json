@@ -1,0 +1,311 @@
+{
+  "suite": "mpr",
+  "generatedAt": "2026-10-31T06:19:18.987Z",
+  "elapsedMs": 39298,
+  "checks": [
+    {
+      "id": "4.0",
+      "title": "MPR panel open with volume ready",
+      "pass": true,
+      "detail": {
+        "rightOpen": true,
+        "status": "ready"
+      }
+    },
+    {
+      "id": "4.1",
+      "title": "axial MPR canvas is 320x320 (volume dims)",
+      "pass": true,
+      "detail": {
+        "index": 0,
+        "compact": false,
+        "title": "轴位",
+        "canvasWidth": 320,
+        "canvasHeight": 320,
+        "display": {
+          "width": 316,
+          "height": 316
+        },
+        "view": {
+          "top": 244,
+          "bottom": 632.5,
+          "height": 388.5
+        }
+      }
+    },
+    {
+      "id": "4.2",
+      "title": "clicking axial at 30%/40% moves voxel cursor to (~96, ~128)",
+      "pass": true,
+      "detail": {
+        "before": {
+          "x": 160,
+          "y": 160,
+          "z": 100
+        },
+        "after": {
+          "x": 95,
+          "y": 127,
+          "z": 100
+        },
+        "expected": {
+          "x": 96,
+          "y": 128
+        }
+      }
+    },
+    {
+      "id": "4.3",
+      "title": "wheel over coronal changes cursor.y by +/-1",
+      "pass": true,
+      "detail": {
+        "before": {
+          "x": 95,
+          "y": 127,
+          "z": 100
+        },
+        "wheelDown": {
+          "x": 95,
+          "y": 128,
+          "z": 100
+        },
+        "wheelUp": {
+          "x": 95,
+          "y": 127,
+          "z": 100
+        }
+      }
+    },
+    {
+      "id": "4.4",
+      "title": "window chips update WW/WC readout (软组织 => 500/50, 牙科 => 3600/900)",
+      "pass": true,
+      "detail": {
+        "chipCount": 4,
+        "softLabel": "软组织",
+        "initialReadout": "WW 2600 WC 600 HU 0",
+        "softReadout": "WW 500 WC 50 HU 0",
+        "dentalReadout": "WW 3600 WC 900 HU 0",
+        "activeChips": 1
+      }
+    },
+    {
+      "id": "4.5",
+      "title": "all three MPR slices contain rendered pixels",
+      "pass": true,
+      "detail": [
+        {
+          "width": 320,
+          "height": 320,
+          "brightPixels": 62084
+        },
+        {
+          "width": 320,
+          "height": 200,
+          "brightPixels": 45897
+        },
+        {
+          "width": 320,
+          "height": 200,
+          "brightPixels": 47103
+        }
+      ]
+    },
+    {
+      "id": "C.1",
+      "title": "no page errors during MPR interactions",
+      "pass": true,
+      "detail": {
+        "pageErrors": []
+      }
+    },
+    {
+      "id": "C.2",
+      "title": "no console errors during MPR interactions",
+      "pass": true,
+      "detail": {
+        "consoleErrors": []
+      }
+    }
+  ],
+  "notes": [
+    {
+      "text": "MPR views",
+      "detail": [
+        {
+          "index": 0,
+          "compact": false,
+          "title": "轴位",
+          "canvasWidth": 320,
+          "canvasHeight": 320,
+          "display": {
+            "width": 316,
+            "height": 316
+          },
+          "view": {
+            "top": 244,
+            "bottom": 632.5,
+            "height": 388.5
+          }
+        },
+        {
+          "index": 1,
+          "compact": true,
+          "title": "冠状位",
+          "canvasWidth": 320,
+          "canvasHeight": 200,
+          "display": {
+            "width": 152,
+            "height": 95
+          },
+          "view": {
+            "top": 659.5,
+            "bottom": 792.5,
+            "height": 133
+          }
+        },
+        {
+          "index": 2,
+          "compact": true,
+          "title": "矢状位",
+          "canvasWidth": 320,
+          "canvasHeight": 200,
+          "display": {
+            "width": 152,
+            "height": 95
+          },
+          "view": {
+            "top": 659.5,
+            "bottom": 792.5,
+            "height": 133
+          }
+        }
+      ]
+    },
+    {
+      "text": "axial canvas box",
+      "detail": {
+        "x": 1240,
+        "y": 277.5,
+        "width": 316,
+        "height": 316
+      }
+    },
+    {
+      "text": "MPR slice readouts after click",
+      "detail": {
+        "readings": [
+          "Z 100 / 199 · 50.0 毫米",
+          "Y 127",
+          "X 95"
+        ],
+        "cursor": "体素 95, 127, 100· HU 0"
+      }
+    },
+    {
+      "text": "scroll of panel body was prevented by canvas wheel handler",
+      "detail": {
+        "bodyScrollTop": 0
+      }
+    },
+    {
+      "text": "MPR panel screenshot",
+      "detail": 121966
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "qa-mpr-full.png",
+      "file": "D:\\Codes\\demos\\CBCT\\tools\\screenshots\\qa-mpr-full.png"
+    },
+    {
+      "name": "qa-mpr-panel.png",
+      "file": "tools/screenshots/qa-mpr-panel.png"
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "consoleWarnings": [
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+  ],
+  "canopy": [
+    {
+      "index": 0,
+      "compact": false,
+      "title": "轴位",
+      "canvasWidth": 320,
+      "canvasHeight": 320,
+      "display": {
+        "width": 316,
+        "height": 316
+      },
+      "view": {
+        "top": 244,
+        "bottom": 632.5,
+        "height": 388.5
+      }
+    },
+    {
+      "index": 1,
+      "compact": true,
+      "title": "冠状位",
+      "canvasWidth": 320,
+      "canvasHeight": 200,
+      "display": {
+        "width": 152,
+        "height": 95
+      },
+      "view": {
+        "top": 659.5,
+        "bottom": 792.5,
+        "height": 133
+      }
+    },
+    {
+      "index": 2,
+      "compact": true,
+      "title": "矢状位",
+      "canvasWidth": 320,
+      "canvasHeight": 200,
+      "display": {
+        "width": 152,
+        "height": 95
+      },
+      "view": {
+        "top": 659.5,
+        "bottom": 792.5,
+        "height": 133
+      }
+    }
+  ],
+  "readoutAfterClick": {
+    "readings": [
+      "Z 100 / 199 · 50.0 毫米",
+      "Y 127",
+      "X 95"
+    ],
+    "cursor": "体素 95, 127, 100· HU 0"
+  },
+  "wheel": {
+    "before": {
+      "x": 95,
+      "y": 127,
+      "z": 100
+    },
+    "afterDown": {
+      "x": 95,
+      "y": 128,
+      "z": 100
+    },
+    "afterUp": {
+      "x": 95,
+      "y": 127,
+      "z": 100
+    }
+  },
+  "windows": {
+    "initialReadout": "WW 2600 WC 600 HU 0",
+    "softReadout": "WW 500 WC 50 HU 0",
+    "dentalReadout": "WW 3600 WC 900 HU 0"
+  }
+}

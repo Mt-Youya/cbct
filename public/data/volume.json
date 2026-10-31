@@ -1,0 +1,96 @@
+{
+  "schema": "cbct-volume/1",
+  "generatedAt": "2026-10-31T06:05:16.848Z",
+  "source": {
+    "directory": "Dicom/20260314112507-0-1-10",
+    "sliceCount": 400,
+    "slicePattern": "Slice_####.dcm"
+  },
+  "patient": {
+    "id": "260314112318092",
+    "name": "cyrus",
+    "latinName": "DouYangJie",
+    "sex": "M",
+    "age": "26Y",
+    "birthDate": "19990908"
+  },
+  "study": {
+    "date": "20260314",
+    "time": "112507",
+    "modality": "CT",
+    "manufacturer": "LargeV",
+    "model": "Smart3DX",
+    "kvp": 100,
+    "exposureTime": 12500,
+    "xrayCurrent": 8,
+    "doseProduct": 25.53496,
+    "scanType": "CT_16x10_Teeth"
+  },
+  "volume": {
+    "dims": [
+      320,
+      320,
+      200
+    ],
+    "spacing": [
+      0.5,
+      0.5,
+      0.5
+    ],
+    "originalDims": [
+      640,
+      640,
+      400
+    ],
+    "originalSpacing": [
+      0.25,
+      0.25,
+      0.25
+    ],
+    "downsampleFactor": 2,
+    "huRange": [
+      -1000,
+      3239
+    ],
+    "quantRange": [
+      -1024,
+      3400
+    ],
+    "dataType": {
+      "u8": "uint8"
+    },
+    "byteOrder": "little-endian",
+    "layout": "x fastest, then y, then z (C order)"
+  },
+  "files": {
+    "u8": "volume_u8.bin",
+    "thumbnail": "thumbnail.png",
+    "dental": "dental.json"
+  },
+  "windows": [
+    {
+      "id": "bone",
+      "label": "Bone",
+      "center": 600,
+      "width": 2600
+    },
+    {
+      "id": "soft",
+      "label": "Soft tissue",
+      "center": 50,
+      "width": 500
+    },
+    {
+      "id": "dental",
+      "label": "Dental",
+      "center": 900,
+      "width": 3600
+    },
+    {
+      "id": "full",
+      "label": "Full range",
+      "center": 1188,
+      "width": 4424
+    }
+  ]
+}

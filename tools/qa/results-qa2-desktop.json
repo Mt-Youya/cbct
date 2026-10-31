@@ -1,0 +1,945 @@
+{
+  "suite": "qa2-desktop",
+  "generatedAt": "2026-10-31T09:13:02.101Z",
+  "elapsedMs": 117086,
+  "checks": [
+    {
+      "id": "1.1",
+      "title": "loads into idle start screen (status idle, no canvas yet)",
+      "pass": true,
+      "detail": {
+        "status": "idle",
+        "canvasCount": 0
+      }
+    },
+    {
+      "id": "1.2",
+      "title": "start screen shows 打开 CBCT 影像 + 3 import actions",
+      "pass": true,
+      "detail": {
+        "text": "CBCT WebGL2 · MPR · 3D DICOM · LOCAL IMPORT 打开 CBCT 影像 在浏览器内重建 DICOM 体数据，文件不会上传到服务器。 ▣ 打开 CBCT 文件夹 ＋ 选择 DICOM 文件 加载示例病例 → 或把 DICOM 文件夹拖到这里 支持未压缩 16-bit CT / CBCT DICOM（单序列即可） 全部计算在本机浏览器完成 · 无服务端上传"
+      }
+    },
+    {
+      "id": "1.3",
+      "title": "two hidden file inputs exist (folder + files)",
+      "pass": true,
+      "detail": {
+        "inputs": 2,
+        "folderAttr": true
+      }
+    },
+    {
+      "id": "2.1",
+      "title": "sample study loads to ready",
+      "pass": true,
+      "detail": {
+        "status": "ready",
+        "src": "Dicom/20260314112507-0-1-10"
+      }
+    },
+    {
+      "id": "2.2",
+      "title": "dental ROI loaded (teeth toggle enabled)",
+      "pass": true,
+      "detail": {
+        "dental": true,
+        "version": 1
+      }
+    },
+    {
+      "id": "2.3",
+      "title": "default interface scale is 1.18 (no stored override)",
+      "pass": true,
+      "detail": {
+        "uiScale": 1.18,
+        "storage": null
+      }
+    },
+    {
+      "id": "2.4",
+      "title": "toolbar rows are h-14 / h-11 / h-7",
+      "pass": true,
+      "detail": {
+        "topbar": 56,
+        "clinical": 44,
+        "statusbar": 28
+      }
+    },
+    {
+      "id": "2.5",
+      "title": "ClinicalBar window chips update WW/WC (软组织 500/50, 骨窗 2600/600)",
+      "pass": true,
+      "detail": {
+        "chipCount": 4,
+        "softWindow": {
+          "ww": 500,
+          "wc": 50
+        },
+        "boneWindow": {
+          "ww": 2600,
+          "wc": 600
+        },
+        "readout": "窗宽窗位 骨窗 软组织 牙科 全范围 WW 500|WC 50 渲染风格 牙齿 骨窗 牙科 软组织 MIP X 光 热力 青色"
+      }
+    },
+    {
+      "id": "3.1",
+      "title": "layout segmented control has 2×2 / 多平面 / 3D",
+      "pass": true,
+      "detail": {
+        "buttons": [
+          {
+            "label": "2×2",
+            "pressed": "true"
+          },
+          {
+            "label": "多平面",
+            "pressed": "false"
+          },
+          {
+            "label": "3D",
+            "pressed": "false"
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.2",
+      "title": "2×2 layout renders exactly 4 panes",
+      "pass": true,
+      "detail": {
+        "count": 4,
+        "titles": [
+          "轴位",
+          "冠状位",
+          "矢状位",
+          "3D 体渲染"
+        ]
+      }
+    },
+    {
+      "id": "3.3",
+      "title": "panes are 轴位 / 冠状位 / 矢状位 / 3D 体渲染",
+      "pass": true,
+      "detail": {
+        "titles": [
+          "轴位",
+          "冠状位",
+          "矢状位",
+          "3D 体渲染"
+        ]
+      }
+    },
+    {
+      "id": "3.4",
+      "title": "each pane is ~half of the workspace (≈790×425 at 1600×1000)",
+      "pass": true,
+      "detail": {
+        "workspace": {
+          "x": 0,
+          "y": 100,
+          "w": 1600,
+          "h": 872
+        },
+        "expected": {
+          "w": 791,
+          "h": 427
+        },
+        "panes": [
+          {
+            "title": "轴位",
+            "x": 6,
+            "y": 106,
+            "w": 791,
+            "h": 427,
+            "headerH": 28
+          },
+          {
+            "title": "冠状位",
+            "x": 803,
+            "y": 106,
+            "w": 791,
+            "h": 427,
+            "headerH": 28
+          },
+          {
+            "title": "矢状位",
+            "x": 6,
+            "y": 539,
+            "w": 791,
+            "h": 427,
+            "headerH": 28
+          },
+          {
+            "title": "3D 体渲染",
+            "x": 803,
+            "y": 539,
+            "w": 791,
+            "h": 427,
+            "headerH": 28
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.5",
+      "title": "all 4 canvases fill their pane (css size matches bitmap viewport)",
+      "pass": true,
+      "detail": {
+        "bad": []
+      }
+    },
+    {
+      "id": "3.6",
+      "title": "all 4 canvases have real bitmap dimensions",
+      "pass": true,
+      "detail": {
+        "panes": [
+          {
+            "title": "轴位",
+            "canvases": [
+              {
+                "w": 789,
+                "h": 397
+              }
+            ]
+          },
+          {
+            "title": "冠状位",
+            "canvases": [
+              {
+                "w": 789,
+                "h": 397
+              }
+            ]
+          },
+          {
+            "title": "矢状位",
+            "canvases": [
+              {
+                "w": 789,
+                "h": 397
+              }
+            ]
+          },
+          {
+            "title": "3D 体渲染",
+            "canvases": [
+              {
+                "w": 789,
+                "h": 397
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.7",
+      "title": "all MPR slices contain rendered pixel data",
+      "pass": true,
+      "detail": {
+        "ink": [
+          {
+            "title": "轴位",
+            "ink": [
+              {
+                "bright": 92820,
+                "pixels": 313233
+              }
+            ]
+          },
+          {
+            "title": "冠状位",
+            "ink": [
+              {
+                "bright": 202639,
+                "pixels": 313233
+              }
+            ]
+          },
+          {
+            "title": "矢状位",
+            "ink": [
+              {
+                "bright": 194325,
+                "pixels": 313233
+              }
+            ]
+          },
+          {
+            "title": "3D 体渲染",
+            "ink": [
+              null
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "3.8",
+      "title": "多平面 layout renders 3 panes (all MPR)",
+      "pass": true,
+      "detail": {
+        "titles": [
+          "轴位",
+          "冠状位",
+          "矢状位"
+        ]
+      }
+    },
+    {
+      "id": "3.9",
+      "title": "3D layout renders exactly 1 pane with WebGL canvas",
+      "pass": true,
+      "detail": {
+        "count": 1,
+        "pane": {
+          "index": 0,
+          "title": "3D 体渲染",
+          "is3d": true,
+          "section": {
+            "x": 6,
+            "y": 106,
+            "w": 1588,
+            "h": 860
+          },
+          "headerH": 28,
+          "content": {
+            "x": 7,
+            "y": 135,
+            "w": 1586,
+            "h": 830
+          },
+          "canvasCount": 1,
+          "canvases": [
+            {
+              "css": {
+                "x": 7,
+                "y": 135,
+                "w": 1586,
+                "h": 830
+              },
+              "bitmap": {
+                "w": 1586,
+                "h": 830
+              },
+              "ink": null
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "3.10",
+      "title": "3D pane renders a non-black volume",
+      "pass": true,
+      "detail": {
+        "width": 1586,
+        "height": 830,
+        "pixels": 1316380,
+        "mean": 30.14,
+        "std": 58.42,
+        "brightCount": 201560,
+        "maxLum": 255,
+        "waitMs": 17149
+      }
+    },
+    {
+      "id": "4.1",
+      "title": "wheel over each MPR pane nudges its own cursor axis",
+      "pass": true,
+      "detail": {
+        "before": {
+          "x": 160,
+          "y": 160,
+          "z": 100
+        },
+        "axial": {
+          "x": 160,
+          "y": 160,
+          "z": 101
+        },
+        "coronal": {
+          "x": 160,
+          "y": 161,
+          "z": 101
+        },
+        "sagittal": {
+          "x": 161,
+          "y": 161,
+          "z": 101
+        }
+      }
+    },
+    {
+      "id": "4.2",
+      "title": "clicking the axial pane moves the crosshair to the picked voxel (~96,128)",
+      "pass": true,
+      "detail": {
+        "before": {
+          "x": 161,
+          "y": 161,
+          "z": 101
+        },
+        "after": {
+          "x": 95,
+          "y": 127,
+          "z": 101
+        },
+        "approx": true
+      }
+    },
+    {
+      "id": "4.3",
+      "title": "MPR zoom buttons 放大 / 缩小 / 适应窗口 exist",
+      "pass": true,
+      "detail": {
+        "buttons": [
+          "放大",
+          "缩小",
+          "适应窗口"
+        ]
+      }
+    },
+    {
+      "id": "4.4",
+      "title": "clicking 放大 changes the rendered slice (zoom works)",
+      "pass": true,
+      "detail": {
+        "diff": {
+          "same": true,
+          "ratio": 0.3101
+        }
+      }
+    },
+    {
+      "id": "4.5",
+      "title": "3D pane updates when the axial cursor.z changes (slice plane overlay)",
+      "pass": true,
+      "detail": {
+        "cursorZ": 107,
+        "diff": {
+          "same": true,
+          "ratio": 0.1523
+        }
+      }
+    },
+    {
+      "id": "5.1",
+      "title": "只看牙齿 enabled with dental ROI (not disabled)",
+      "pass": true,
+      "detail": {
+        "disabled": false
+      }
+    },
+    {
+      "id": "5.2",
+      "title": "teeth toggle sets teethOnly + preset=teeth",
+      "pass": true,
+      "detail": {
+        "teethOnly": true,
+        "preset": "teeth"
+      }
+    },
+    {
+      "id": "5.3",
+      "title": "teeth toggle changes the 3D rendering",
+      "pass": true,
+      "detail": {
+        "diff": {
+          "same": true,
+          "ratio": 0.2674
+        }
+      }
+    },
+    {
+      "id": "5.4",
+      "title": "render preset select has 8 presets",
+      "pass": true,
+      "detail": {
+        "options": [
+          "teeth",
+          "bone",
+          "dental",
+          "soft",
+          "mip",
+          "xray",
+          "heat",
+          "teal"
+        ],
+        "value": "bone"
+      }
+    },
+    {
+      "id": "5.5",
+      "title": "changing the preset select updates presetId",
+      "pass": true,
+      "detail": {
+        "preset": "mip"
+      }
+    },
+    {
+      "id": "6.1",
+      "title": "设置 opens the drawer with 界面字号 section",
+      "pass": true,
+      "detail": {
+        "text": "显示与渲染设置 ✕ 界面字号 118% 小 标准 大 特大 调整整个界面的文字大小（浏览器会记住） 患者 Cyrus Doyle 260314112318092 男 26Y 检查日期 2026-03-14 11:25:07 检查类型 CT CT_16x10_Teeth 设备 LargeV Smart3DX 曝光 100 kVp 8 mA · 12.5 s 体数据 矩阵 320 × 320 × 200 640 × 640 × 400 原始 体素 0.50 mm iso HU 范围 -1000 … 3239 8-bit 量化 层数 400 轴位 DICOM 体渲染风格 牙齿 骨窗 牙科 软组",
+        "buttons": [
+          "✕",
+          "小",
+          "标准",
+          "大",
+          "特大",
+          "牙齿1",
+          "骨窗2",
+          "牙科3",
+          "软组织4",
+          "MIP5",
+          "X 光6",
+          "热力7",
+          "青色8",
+          "自动旋转",
+          "包围盒",
+          "网格"
+        ],
+        "hasFontSection": true,
+        "rect": {
+          "w": 360,
+          "x": 1240
+        }
+      }
+    },
+    {
+      "id": "6.2",
+      "title": "特大 sets uiScale 1.55 and persists in localStorage",
+      "pass": true,
+      "detail": {
+        "uiScale": 1.55,
+        "storage": "1.55"
+      }
+    },
+    {
+      "id": "6.3",
+      "title": "特大 increases chrome font-size",
+      "pass": true,
+      "detail": {
+        "before": "10.62px",
+        "after": "13.95px"
+      }
+    },
+    {
+      "id": "6.4",
+      "title": "特大 causes no horizontal overflow at 1600×1000",
+      "pass": true,
+      "detail": {
+        "bodyScrollWidth": 1600,
+        "innerWidth": 1600,
+        "header": [
+          1600,
+          1600
+        ]
+      }
+    },
+    {
+      "id": "6.5",
+      "title": "Escape closes the settings drawer",
+      "pass": true,
+      "detail": {
+        "settingsOpen": false
+      }
+    },
+    {
+      "id": "7.1",
+      "title": "EN switches UI to English and updates documentElement.lang",
+      "pass": true,
+      "detail": {
+        "lang": "en",
+        "docLang": "en",
+        "stored": "en",
+        "labels": {
+          "settings": "Settings",
+          "teeth": "Teeth only",
+          "layouts": [
+            "2×2",
+            "MPR",
+            "3D"
+          ]
+        }
+      }
+    },
+    {
+      "id": "7.2",
+      "title": "English persists across reload (start screen in English)",
+      "pass": true,
+      "detail": {
+        "status": "idle",
+        "lang": "en",
+        "docLang": "en",
+        "stored": "en",
+        "text": "CBCT WebGL2 · MPR · 3D DICOM · LOCAL IMPORT Open a CBCT study Reconstruct the DICOM volume locally in your browser. Noth"
+      }
+    },
+    {
+      "id": "7.3",
+      "title": "English sample loads, uiScale persisted 1.55",
+      "pass": true,
+      "detail": {
+        "status": "ready",
+        "lang": "en",
+        "uiScale": 1.55
+      }
+    },
+    {
+      "id": "7.4",
+      "title": "switching back to 中文 persists zh",
+      "pass": true,
+      "detail": {
+        "lang": "zh",
+        "docLang": "zh-CN",
+        "stored": "zh"
+      }
+    },
+    {
+      "id": "8.1",
+      "title": "in-browser DICOM import (403 files) replaces the volume without reload",
+      "pass": true,
+      "detail": {
+        "status": "ready",
+        "src": "local import",
+        "dims": [
+          320,
+          320,
+          200
+        ],
+        "ms": 7536
+      }
+    },
+    {
+      "id": "8.2",
+      "title": "imported study has preview poster + dental ROI",
+      "pass": true,
+      "detail": {
+        "preview": true,
+        "dental": true
+      }
+    },
+    {
+      "id": "8.3",
+      "title": "workspace renders imported volume (4 panes, non-empty canvases)",
+      "pass": true,
+      "detail": {
+        "count": 4,
+        "titles": [
+          "轴位",
+          "冠状位",
+          "矢状位",
+          "3D 体渲染"
+        ]
+      }
+    },
+    {
+      "id": "C.1",
+      "title": "no page errors during desktop run",
+      "pass": true,
+      "detail": {
+        "pageErrors": []
+      }
+    },
+    {
+      "id": "C.2",
+      "title": "no console errors during desktop run",
+      "pass": true,
+      "detail": {
+        "consoleErrors": []
+      }
+    }
+  ],
+  "notes": [
+    {
+      "text": "start screen DOM",
+      "detail": {
+        "status": "idle",
+        "inputs": 2,
+        "canvasCount": 0
+      }
+    },
+    {
+      "text": "sample loaded",
+      "detail": {
+        "status": "ready",
+        "src": "Dicom/20260314112507-0-1-10",
+        "dims": [
+          320,
+          320,
+          200
+        ],
+        "dental": true,
+        "patient": "Cyrus",
+        "fps": 0,
+        "uiScale": 1.18,
+        "docLang": "zh-CN"
+      }
+    },
+    {
+      "text": "quad panes",
+      "detail": [
+        {
+          "index": 0,
+          "title": "轴位",
+          "is3d": false,
+          "section": {
+            "x": 6,
+            "y": 106,
+            "w": 791,
+            "h": 427
+          },
+          "headerH": 28,
+          "content": {
+            "x": 7,
+            "y": 135,
+            "w": 789,
+            "h": 397
+          },
+          "canvasCount": 1,
+          "canvases": [
+            {
+              "css": {
+                "x": 7,
+                "y": 135,
+                "w": 789,
+                "h": 397
+              },
+              "bitmap": {
+                "w": 789,
+                "h": 397
+              },
+              "ink": {
+                "bright": 92820,
+                "pixels": 313233
+              }
+            }
+          ]
+        },
+        {
+          "index": 1,
+          "title": "冠状位",
+          "is3d": false,
+          "section": {
+            "x": 803,
+            "y": 106,
+            "w": 791,
+            "h": 427
+          },
+          "headerH": 28,
+          "content": {
+            "x": 804,
+            "y": 135,
+            "w": 789,
+            "h": 397
+          },
+          "canvasCount": 1,
+          "canvases": [
+            {
+              "css": {
+                "x": 804,
+                "y": 135,
+                "w": 789,
+                "h": 397
+              },
+              "bitmap": {
+                "w": 789,
+                "h": 397
+              },
+              "ink": {
+                "bright": 202639,
+                "pixels": 313233
+              }
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "title": "矢状位",
+          "is3d": false,
+          "section": {
+            "x": 6,
+            "y": 539,
+            "w": 791,
+            "h": 427
+          },
+          "headerH": 28,
+          "content": {
+            "x": 7,
+            "y": 568,
+            "w": 789,
+            "h": 397
+          },
+          "canvasCount": 1,
+          "canvases": [
+            {
+              "css": {
+                "x": 7,
+                "y": 568,
+                "w": 789,
+                "h": 397
+              },
+              "bitmap": {
+                "w": 789,
+                "h": 397
+              },
+              "ink": {
+                "bright": 194325,
+                "pixels": 313233
+              }
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "title": "3D 体渲染",
+          "is3d": true,
+          "section": {
+            "x": 803,
+            "y": 539,
+            "w": 791,
+            "h": 427
+          },
+          "headerH": 28,
+          "content": {
+            "x": 804,
+            "y": 568,
+            "w": 789,
+            "h": 397
+          },
+          "canvasCount": 1,
+          "canvases": [
+            {
+              "css": {
+                "x": 804,
+                "y": 568,
+                "w": 789,
+                "h": 397
+              },
+              "bitmap": {
+                "w": 789,
+                "h": 397
+              },
+              "ink": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "text": "generic DICOM import",
+      "detail": {
+        "files": 403,
+        "ms": 7536,
+        "dims": [
+          320,
+          320,
+          200
+        ],
+        "src": "local import",
+        "preview": true,
+        "dental": true
+      }
+    },
+    {
+      "text": "console warnings",
+      "detail": [
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+        "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+        "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+        "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+        "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+        "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+        "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+        "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "qa2-start-zh.png"
+    },
+    {
+      "name": "qa2-layout-quad.png"
+    },
+    {
+      "name": "qa2-layout-mpr.png"
+    },
+    {
+      "name": "qa2-layout-3d.png",
+      "file": "D:\\Codes\\demos\\CBCT\\tools\\screenshots\\qa2-layout-3d.png"
+    },
+    {
+      "name": "qa2-layout-3d-full.png"
+    },
+    {
+      "name": "qa2-mpr-crosshair.png"
+    },
+    {
+      "name": "qa2-mpr-zoom-before.png",
+      "file": "D:\\Codes\\demos\\CBCT\\tools\\screenshots\\qa2-mpr-zoom-before.png"
+    },
+    {
+      "name": "qa2-mpr-zoom-after.png",
+      "file": "D:\\Codes\\demos\\CBCT\\tools\\screenshots\\qa2-mpr-zoom-after.png"
+    },
+    {
+      "name": "qa2-3d-before-slice.png",
+      "file": "D:\\Codes\\demos\\CBCT\\tools\\screenshots\\qa2-3d-before-slice.png"
+    },
+    {
+      "name": "qa2-3d-after-slice.png",
+      "file": "D:\\Codes\\demos\\CBCT\\tools\\screenshots\\qa2-3d-after-slice.png"
+    },
+    {
+      "name": "qa2-quad-after-mpr.png"
+    },
+    {
+      "name": "qa2-teeth-before.png",
+      "file": "D:\\Codes\\demos\\CBCT\\tools\\screenshots\\qa2-teeth-before.png"
+    },
+    {
+      "name": "qa2-teeth-after.png",
+      "file": "D:\\Codes\\demos\\CBCT\\tools\\screenshots\\qa2-teeth-after.png"
+    },
+    {
+      "name": "qa2-teeth-only-full.png"
+    },
+    {
+      "name": "qa2-settings-xlarge.png"
+    },
+    {
+      "name": "qa2-desktop-en.png"
+    },
+    {
+      "name": "qa2-start-en.png"
+    },
+    {
+      "name": "qa2-custom-import.png"
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "consoleWarnings": [
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+    "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+    "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+    "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+    "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true. See: https://html.spec.whatwg.org/multipage/canvas.html#concept-canvas-will-read-frequently",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+  ],
+  "url": "http://127.0.0.1:5173/"
+}

@@ -1,0 +1,35 @@
+// Cloudflare Workers + Workers Static Assets deployment config.
+// Build the site first: `pnpm build` (outputs ./dist), then `pnpm exec wrangler deploy`.
+// See tools/deploy-cloudflare.md for auth, custom-domain and rollback steps.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+
+  // Worker name (also the *.workers.dev subdomain, if workers_dev is enabled).
+  "name": "cbct",
+
+  // Pin the Workers runtime version. Bump deliberately when adopting new runtime features.
+  "compatibility_date": "2026-10-31",
+
+  // Serve the Vite build output as Workers Static Assets.
+  // `single-page-application` returns /index.html for unknown non-asset paths,
+  // so client-side routing works. Real files under /assets and /data are served as-is.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application",
+    "html_handling": "auto-trailing-slash"
+  },
+
+  // Custom domain (Workers Custom Domain). Requires the zone cyrusdoyle.me to be
+  // active on the SAME Cloudflare account and no conflicting DNS record for
+  // cbct.cyrusdoyle.me; Wrangler creates/manages the proxied DNS record on deploy.
+  // NOTE: when `routes` is set, workers_dev defaults to FALSE, so this config
+  // publishes only to cbct.cyrusdoyle.me. Add "workers_dev": true to also get a
+  // <name>.<account-subdomain>.workers.dev URL for testing, or comment out this
+  // `routes` block to deploy to workers.dev only.
+  "routes": [
+    {
+      "pattern": "cbct.cyrusdoyle.me",
+      "custom_domain": true
+    }
+  ]
+}
