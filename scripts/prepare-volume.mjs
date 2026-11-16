@@ -34,7 +34,7 @@ function arg(name, fallback) {
   return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : fallback
 }
 
-const inputDir = path.resolve(ROOT, arg('input', 'dicom'))
+const inputDir = path.resolve(ROOT, arg('input', 'Dicom/20260314112507-0-1-10'))
 const outDir = path.resolve(ROOT, arg('out', 'public/data'))
 const factor = Number(arg('factor', '2'))
 if (![1, 2, 4].includes(factor)) throw new Error('--factor must be 1, 2 or 4')

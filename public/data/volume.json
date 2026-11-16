@@ -1,6 +1,6 @@
 {
   "schema": "cbct-volume/1",
-  "generatedAt": "2026-10-31T06:05:16.848Z",
+  "generatedAt": "2026-11-15T15:49:49.292Z",
   "source": {
     "directory": "Dicom/20260314112507-0-1-10",
     "sliceCount": 400,
@@ -8,7 +8,7 @@
   },
   "patient": {
     "id": "260314112318092",
-    "name": "cyrus",
+    "name": "窦扬杰",
     "latinName": "DouYangJie",
     "sex": "M",
     "age": "26Y",

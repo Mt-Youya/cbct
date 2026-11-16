@@ -1,6 +1,7 @@
 ﻿import { useCallback, useEffect, useRef, useState } from 'react'
 import type { MprAxis, VolumeData } from '../../types'
 import { mprDisplay, pickMpr } from '../../data/mpr'
+import { mprNavigation } from '../../data/mprRange'
 import { useViewerStore } from '../../store/useViewerStore'
 import { translate } from '../../i18n'
 
@@ -13,11 +14,14 @@ const ORIENT: Record<MprAxis, [string, string, string, string]> = {
   sagittal: ['S', 'I', 'A', 'P'],
 }
 
+type Point = { x: number; y: number }
+
 interface SliceImage {
   key: string
   canvas: HTMLCanvasElement
   width: number
   height: number
+  signal?: { integral: Uint32Array; anchor: Point }
 }
 
 function sliceKey(
@@ -28,7 +32,7 @@ function sliceKey(
   windowWidth: number,
 ): string {
   const [w, h, d] = volume.dims
-  return `${axis}|${cursor.x}|${cursor.y}|${cursor.z}|${Math.round(windowCenter)}|${Math.round(windowWidth)}|${w}|${h}|${d}`
+  return `${axis}|${cursor[NORMAL[axis]]}|${windowCenter}|${windowWidth}|${w}|${h}|${d}`
 }
 
 function buildSliceImage(
@@ -59,56 +63,78 @@ function buildSliceImage(
   const hi = (windowCenter + windowWidth / 2 - qMin) * huToU8
   const scale = 255 / Math.max(1e-3, hi - lo)
 
-  let p = 0
-  if (axis === 'axial') {
-    const base = cursor.z * plane
-    for (let row = 0; row < height; row++) {
-      let src = base + row * w
-      for (let col = 0; col < width; col++) {
-        const q = (u8[src++] - lo) * scale
-        const v = q <= 0 ? 0 : q >= 255 ? 255 : q
-        data[p] = v
-        data[p + 1] = v
-        data[p + 2] = v
-        data[p + 3] = 255
-        p += 4
-      }
-    }
-  } else if (axis === 'coronal') {
-    const y = cursor.y
-    for (let row = 0; row < height; row++) {
-      const z = d - 1 - row
-      let src = z * plane + y * w
-      for (let col = 0; col < width; col++) {
-        const q = (u8[src++] - lo) * scale
-        const v = q <= 0 ? 0 : q >= 255 ? 255 : q
-        data[p] = v
-        data[p + 1] = v
-        data[p + 2] = v
-        data[p + 3] = 255
-        p += 4
-      }
-    }
-  } else {
-    const x = cursor.x
-    for (let row = 0; row < height; row++) {
-      const z = d - 1 - row
-      let src = z * plane + x
-      for (let col = 0; col < width; col++) {
-        const q = (u8[src] - lo) * scale
-        src += w
-        const v = q <= 0 ? 0 : q >= 255 ? 255 : q
-        data[p] = v
-        data[p + 1] = v
-        data[p + 2] = v
-        data[p + 3] = 255
-        p += 4
+  const columnStride = axis === 'sagittal' ? w : 1
+  const rowStride = axis === 'axial' ? w : -plane
+  const start = axis === 'axial' ? cursor.z * plane : (d - 1) * plane + (axis === 'coronal' ? cursor.y * w : cursor.x)
+  const background = mprNavigation(volume).background
+  // Integral image lets pan constraints query foreground in the visible
+  // rectangle in constant time, including at the corners of a circular FOV.
+  const stride = width + 1
+  const integral = background === null ? null : new Uint32Array(stride * (height + 1))
+  let closest = Infinity
+  let anchor: Point | undefined
+
+  for (let row = 0, p = 0; row < height; row++) {
+    let src = start + row * rowStride
+    let rowSignal = 0
+    for (let col = 0; col < width; col++, p += 4, src += columnStride) {
+      const value = u8[src]
+      const gray = (value - lo) * scale
+      data[p] = gray
+      data[p + 1] = gray
+      data[p + 2] = gray
+      data[p + 3] = 255
+      if (integral && background !== null) {
+        if (value > background) {
+          rowSignal++
+          const distance = (col + 0.5 - width / 2) ** 2 + (row + 0.5 - height / 2) ** 2
+          if (distance < closest) {
+            closest = distance
+            anchor = { x: col + 0.5, y: row + 0.5 }
+          }
+        }
+        const index = row * stride + col + 1
+        integral[index + stride] = integral[index] + rowSignal
       }
     }
   }
 
   ctx.putImageData(image, 0, 0)
-  return { key, canvas, width, height }
+  return { key, canvas, width, height, signal: integral && anchor ? { integral, anchor } : undefined }
+}
+
+function boundSlicePan(image: SliceImage, scale: number, viewportW: number, viewportH: number) {
+  const dw = image.width * scale
+  const dh = image.height * scale
+  const maxX = Math.max(0, (dw - viewportW) / 2)
+  const maxY = Math.max(0, (dh - viewportH) / 2)
+
+  const clamp = (point: Point) => ({
+    x: Math.max(-maxX, Math.min(maxX, point.x)),
+    y: Math.max(-maxY, Math.min(maxY, point.y)),
+  })
+  const signal = image.signal
+  if (!signal) return (wanted: Point) => clamp(wanted)
+
+  const { integral, anchor } = signal
+  const stride = image.width + 1
+  const visible = ({ x, y }: Point) => {
+    const left = ((dw - viewportW) / 2 - x) / scale
+    const top = ((dh - viewportH) / 2 - y) / scale
+    const x0 = Math.max(0, Math.floor(left))
+    const y0 = Math.max(0, Math.floor(top))
+    const x1 = Math.min(image.width, Math.ceil(left + viewportW / scale))
+    const y1 = Math.min(image.height, Math.ceil(top + viewportH / scale))
+    return integral[y1 * stride + x1] - integral[y0 * stride + x1]
+      - integral[y1 * stride + x0] + integral[y0 * stride + x0] > 0
+  }
+  const centeredOnSignal = clamp({ x: dw / 2 - anchor.x * scale, y: dh / 2 - anchor.y * scale })
+  return (wanted: Point, previous: Point) => {
+    const next = clamp(wanted)
+    if (visible(next)) return next
+    const fallback = clamp(previous)
+    return visible(fallback) ? fallback : centeredOnSignal
+  }
 }
 
 interface ViewLayout {
@@ -117,13 +143,19 @@ interface ViewLayout {
   scale: number
   imgW: number
   imgH: number
+  pan: Point
+  boundPan: (wanted: Point, previous: Point) => Point
 }
 
 export function MprViewport({ axis, className = '' }: { axis: MprAxis; className?: string }) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const sliceRef = useRef<SliceImage | null>(null)
-  const viewRef = useRef<ViewLayout>({ offsetX: 0, offsetY: 0, scale: 1, imgW: 1, imgH: 1 })
+  const viewRef = useRef<ViewLayout>({
+    offsetX: 0, offsetY: 0, scale: 1, imgW: 1, imgH: 1,
+    pan: { x: 0, y: 0 },
+    boundPan: (wanted) => wanted,
+  })
   const dragRef = useRef<{ mode: 'pan' | 'pick'; x: number; y: number; panX: number; panY: number } | null>(null)
 
   const volume = useViewerStore((s) => s.volume)
@@ -155,6 +187,11 @@ export function MprViewport({ axis, className = '' }: { axis: MprAxis; className
     setPan({ x: 0, y: 0 })
   }, [])
 
+  const changeZoom = useCallback((factor: number) => {
+    setPan(viewRef.current.pan)
+    setZoom((value) => Math.max(0.4, Math.min(12, value * factor)))
+  }, [])
+
   const draw = useCallback(() => {
     const canvas = canvasRef.current
     if (!canvas || !volume || size.w < 8 || size.h < 8) return
@@ -181,9 +218,13 @@ export function MprViewport({ axis, className = '' }: { axis: MprAxis; className
     const scale = fit * zoom
     const dw = image.width * scale
     const dh = image.height * scale
-    const offsetX = (cssW - dw) / 2 + pan.x
-    const offsetY = (cssH - dh) / 2 + pan.y
-    viewRef.current = { offsetX, offsetY, scale, imgW: image.width, imgH: image.height }
+    const boundPan = boundSlicePan(image, scale, cssW, cssH)
+    const visiblePan = boundPan(pan, viewRef.current.pan)
+    const offsetX = (cssW - dw) / 2 + visiblePan.x
+    const offsetY = (cssH - dh) / 2 + visiblePan.y
+    viewRef.current = {
+      offsetX, offsetY, scale, imgW: image.width, imgH: image.height, pan: visiblePan, boundPan,
+    }
 
     ctx.imageSmoothingEnabled = zoom < 2.5
     ctx.imageSmoothingQuality = 'high'
@@ -275,13 +316,14 @@ export function MprViewport({ axis, className = '' }: { axis: MprAxis; className
   const handleWheel = useCallback(
     (event: WheelEvent) => {
       event.preventDefault()
+      if (event.deltaY === 0) return
       if (event.ctrlKey || event.metaKey) {
-        setZoom((value) => Math.min(12, Math.max(0.4, value * Math.exp(-event.deltaY * 0.0018))))
+        changeZoom(Math.exp(-event.deltaY * 0.0018))
       } else {
         nudgeCursor(NORMAL[axis], event.deltaY > 0 ? 1 : -1)
       }
     },
-    [axis, nudgeCursor],
+    [axis, changeZoom, nudgeCursor],
   )
 
   useEffect(() => {
@@ -297,8 +339,8 @@ export function MprViewport({ axis, className = '' }: { axis: MprAxis; className
       mode: panMode ? 'pan' : 'pick',
       x: event.clientX,
       y: event.clientY,
-      panX: pan.x,
-      panY: pan.y,
+      panX: viewRef.current.pan.x,
+      panY: viewRef.current.pan.y,
     }
     event.currentTarget.setPointerCapture(event.pointerId)
     if (!panMode) pick(event.clientX, event.clientY)
@@ -308,7 +350,15 @@ export function MprViewport({ axis, className = '' }: { axis: MprAxis; className
     const drag = dragRef.current
     if (!drag) return
     if (drag.mode === 'pan') {
-      setPan({ x: drag.panX + (event.clientX - drag.x), y: drag.panY + (event.clientY - drag.y) })
+      const next = viewRef.current.boundPan(
+        { x: drag.panX + event.clientX - drag.x, y: drag.panY + event.clientY - drag.y },
+        { x: drag.panX, y: drag.panY },
+      )
+      drag.x = event.clientX
+      drag.y = event.clientY
+      drag.panX = next.x
+      drag.panY = next.y
+      setPan(next)
     } else {
       pick(event.clientX, event.clientY)
     }
@@ -325,6 +375,8 @@ export function MprViewport({ axis, className = '' }: { axis: MprAxis; className
     <div ref={wrapRef} className={`relative h-full w-full overflow-hidden bg-black ${className}`}>
       <canvas
         ref={canvasRef}
+        role="img"
+        aria-label={translate(lang, axis)}
         className="absolute inset-0 h-full w-full cursor-crosshair touch-none select-none"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -335,16 +387,16 @@ export function MprViewport({ axis, className = '' }: { axis: MprAxis; className
       />
       <div className="absolute right-1.5 top-1.5 flex flex-col gap-1">
         {[
-          { label: translate(lang, 'zoom.in'), symbol: '+', action: () => setZoom((v) => Math.min(12, v * 1.25)) },
-          { label: translate(lang, 'zoom.out'), symbol: '-', action: () => setZoom((v) => Math.max(0.4, v / 1.25)) },
-          { label: translate(lang, 'zoom.fit'), symbol: 'F', action: resetView },
+          { label: translate(lang, 'zoom.in'), symbol: '+', factor: 1.25 },
+          { label: translate(lang, 'zoom.out'), symbol: '-', factor: 1 / 1.25 },
+          { label: translate(lang, 'zoom.fit'), symbol: 'F', factor: null },
         ].map((item) => (
           <button
             key={item.label}
             type="button"
             aria-label={item.label}
             title={item.label}
-            onClick={item.action}
+            onClick={() => item.factor === null ? resetView() : changeZoom(item.factor)}
             className="grid h-6 w-6 place-items-center rounded border border-[#94a3b8]/25 bg-[#050a10]/75 font-mono text-[11px] text-[#9fb4c8] backdrop-blur transition hover:border-teal-300/50 hover:text-teal-200"
           >
             {item.symbol}

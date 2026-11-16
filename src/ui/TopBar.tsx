@@ -8,7 +8,13 @@ type IconProps = { className?: string }
 const LAYOUT_OPTIONS: ReadonlyArray<{ id: WorkspaceLayout; key: MessageKey }> = [
   { id: 'quad', key: 'layout.quad' },
   { id: 'mpr', key: 'layout.mpr' },
-  { id: '3d', key: 'layout.3d' },
+  { id: 'axial', key: 'axial' },
+  { id: 'coronal', key: 'coronal' },
+  { id: 'sagittal', key: 'sagittal' },
+  { id: 'panorama', key: 'layout.panorama' },
+  { id: 'dentalSection', key: 'layout.dentalSection' },
+  { id: 'oblique', key: 'layout.oblique' },
+  { id: '3d', key: 'pane.volume' },
 ]
 
 const BUTTON_BASE =
@@ -53,42 +59,6 @@ function FolderOpenIcon({ className }: IconProps) {
       aria-hidden
     >
       <path d="M6 14l1.45-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.55 6a2 2 0 0 1-1.94 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H18a2 2 0 0 1 2 2v2" />
-    </svg>
-  )
-}
-
-function LayoutGlyph({ layout, className }: { layout: WorkspaceLayout; className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className={className}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      {layout === 'quad' ? (
-        <>
-          <rect x="3" y="3" width="7.5" height="7.5" rx="1.2" />
-          <rect x="13.5" y="3" width="7.5" height="7.5" rx="1.2" />
-          <rect x="3" y="13.5" width="7.5" height="7.5" rx="1.2" />
-          <rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.2" />
-        </>
-      ) : layout === 'mpr' ? (
-        <>
-          <rect x="3" y="3" width="8" height="18" rx="1.2" />
-          <rect x="13" y="3" width="8" height="8" rx="1.2" />
-          <rect x="13" y="13" width="8" height="8" rx="1.2" />
-        </>
-      ) : (
-        <>
-          <path d="M12 2.6 20.6 7.1v9.8L12 21.4 3.4 16.9V7.1z" />
-          <path d="M3.4 7.1 12 11.6l8.6-4.5" />
-          <path d="M12 11.6v9.8" />
-        </>
-      )}
     </svg>
   )
 }
@@ -209,35 +179,18 @@ export function TopBar() {
 
         <span aria-hidden className="mx-0.5 h-5 w-px shrink-0 bg-[#94a3b8]/15 max-[900px]:hidden" />
 
-        <div
-          role="group"
-          aria-label={translate(lang, 'multiplanar')}
-          className="flex shrink-0 items-center gap-0.5 rounded-md border border-[#94a3b8]/15 bg-[#050a10]/60 p-0.5"
-        >
-          {LAYOUT_OPTIONS.map((option) => {
-            const active = layout === option.id
-            return (
-              <button
-                key={option.id}
-                type="button"
-                onClick={() => setLayout(option.id)}
-                aria-pressed={active}
-                aria-label={translate(lang, option.key)}
-                title={translate(lang, option.key)}
-                className={`inline-flex h-6 items-center justify-center gap-1 rounded px-1 font-mono text-[9px] leading-none tracking-[0.05em] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-teal-300/60 ${
-                  active
-                    ? 'bg-teal-300/15 text-teal-200 shadow-[inset_0_0_0_1px_rgba(45,212,191,0.35)]'
-                    : 'text-[#7d93a8] hover:bg-[#94a3b8]/10 hover:text-[#dbe9f6]'
-                }`}
-              >
-                <LayoutGlyph layout={option.id} className="h-3 w-3 shrink-0" />
-                <span className="whitespace-nowrap max-[620px]:hidden">
-                  {translate(lang, option.key)}
-                </span>
-              </button>
-            )
-          })}
-        </div>
+        <label className="flex items-center gap-1.5 whitespace-nowrap rounded-md border border-teal-300/35 bg-teal-300/5 px-1.5 py-0.5 text-[10px] text-teal-200">
+          <span className="max-[380px]:sr-only">{translate(lang, 'layout.selector')}</span>
+          <select
+            value={layout}
+            onChange={(event) => setLayout(event.currentTarget.value as WorkspaceLayout)}
+            className="h-6 w-[9.2em] rounded bg-[#07121a] px-1 text-teal-100 focus-visible:outline focus-visible:outline-teal-300 min-[620px]:w-[12em]"
+          >
+            {LAYOUT_OPTIONS.map(({ id, key }) => (
+              <option key={id} value={id}>{translate(lang, key)}</option>
+            ))}
+          </select>
+        </label>
 
         <span aria-hidden className="mx-0.5 h-5 w-px shrink-0 bg-[#94a3b8]/15 max-[900px]:hidden" />
 

@@ -1,14 +1,26 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { type ComponentRef, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Grid, OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
-import type { DentalRoi, VolumeData } from '../types'
+import { translate } from '../i18n'
+import type { DentalRoi, Vec3, VolumeData } from '../types'
 import { useViewerStore } from '../store/useViewerStore'
 import { VolumeBounds, VolumeMesh, volumeWorldSize } from './VolumeMesh'
 
 const ACCENT = '#2dd4bf'
 /** The source volume is ~320铏?in-plane, so this is a 1:1 bitmap in practice. */
 const SLICE_TEXTURE_MAX = 320
+type CameraControls = ComponentRef<typeof OrbitControls>
+const DIRECTIONS = {
+  free: [0.66, 0.46, 0.66],
+  front: [0, 0, 1],
+  back: [0, 0, -1],
+  left: [1, 0, 0],
+  right: [-1, 0, 0],
+  top: [0, 1, 0.0001],
+  bottom: [0, -1, 0.0001],
+} satisfies Record<string, Vec3>
+type CameraRequest = { direction: keyof typeof DIRECTIONS }
 
 /**
  * Frames the volume (or the dental ROI when teeth-only mode is active) for
@@ -22,7 +34,8 @@ function frameCamera(
   volume: VolumeData,
   teethOnly: boolean,
   dental: DentalRoi | null,
-  controls: { target: THREE.Vector3; update: () => void } | null,
+  controls: CameraControls | null,
+  request: CameraRequest | null,
 ): void {
   const aspect = width / Math.max(1, height)
   const tanV = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2)
@@ -47,7 +60,16 @@ function frameCamera(
     distance *= Math.min(1.4, Math.max(0.3, (halfExtent.length() / 1.22) * 1.55))
   }
 
-  const direction = new THREE.Vector3(0.66, 0.46, 0.66).normalize()
+  if (controls && request) {
+    // Flush orbit inertia before positioning the camera.
+    const { enableDamping, autoRotate } = controls
+    controls.enableDamping = false
+    controls.autoRotate = false
+    controls.update()
+    controls.enableDamping = enableDamping
+    controls.autoRotate = autoRotate
+  }
+  const direction = new THREE.Vector3(...DIRECTIONS[request?.direction ?? 'free']).normalize()
   camera.position.copy(direction.multiplyScalar(distance).add(target))
   camera.lookAt(target)
   if (controls) {
@@ -56,12 +78,10 @@ function frameCamera(
   }
 }
 
-function CameraRig({ volume }: { volume: VolumeData }) {
+function CameraRig({ volume, request }: { volume: VolumeData; request: CameraRequest | null }) {
   const camera = useThree((s) => s.camera)
   const size = useThree((s) => s.size)
-  const controls = useThree((s) => s.controls) as unknown as
-    | { target: THREE.Vector3; update: () => void }
-    | null
+  const controls = useThree((s) => s.controls) as CameraControls | null
   const teethOnly = useViewerStore((s) => s.teethOnly)
   const dental = useViewerStore((s) => s.dental)
   const framedRef = useRef(false)
@@ -69,8 +89,8 @@ function CameraRig({ volume }: { volume: VolumeData }) {
   useEffect(() => {
     if (!(camera instanceof THREE.PerspectiveCamera)) return
     if (size.width < 1 || size.height < 1) return
-    frameCamera(camera, size.width, size.height, volume, teethOnly, dental, controls)
-  }, [camera, size, controls, teethOnly, dental, volume])
+    frameCamera(camera, size.width, size.height, volume, teethOnly, dental, controls, request)
+  }, [camera, size, controls, teethOnly, dental, volume, request])
 
   // First layout pass can report a 0x0 size; the effect above then bails and may
   // never re-run. Frame from the render loop once a real pane size exists.
@@ -88,7 +108,8 @@ function CameraRig({ volume }: { volume: VolumeData }) {
       volume,
       store.teethOnly,
       store.dental,
-      state.controls as unknown as { target: THREE.Vector3; update: () => void } | null,
+      state.controls as CameraControls | null,
+      request,
     )
     framedRef.current = true
   })
@@ -279,7 +300,7 @@ function SliceSync({ volume }: { volume: VolumeData }) {
   )
 }
 
-function SceneContent({ volume }: { volume: VolumeData }) {
+function SceneContent({ volume, request }: { volume: VolumeData; request: CameraRequest | null }) {
   const autoRotate = useViewerStore((s) => s.autoRotate)
   const showGrid = useViewerStore((s) => s.showGrid)
   const size = useMemo(() => volumeWorldSize(volume), [volume])
@@ -319,17 +340,20 @@ function SceneContent({ volume }: { volume: VolumeData }) {
         />
       )}
       <PerfProbe />
-      <CameraRig volume={volume} />
+      <CameraRig volume={volume} request={request} />
     </>
   )
 }
 
 /**
  * Embeddable 3D volume pane. Fills its parent (parent must be positioned and
- * have a definite size) and renders no chrome of its own.
+ * have a definite size).
  */
 export function VolumeViewport() {
   const volume = useViewerStore((s) => s.volume)
+  const lang = useViewerStore((s) => s.lang)
+  const setAutoRotate = useViewerStore((s) => s.setAutoRotate)
+  const [request, setRequest] = useState<CameraRequest | null>(null)
 
   if (!volume) return null
 
@@ -345,8 +369,22 @@ export function VolumeViewport() {
           gl.setClearAlpha(0)
         }}
       >
-        <SceneContent volume={volume} />
+        <SceneContent volume={volume} request={request} />
       </Canvas>
+      <select
+        aria-label={translate(lang, 'volume.direction')}
+        value=""
+        onChange={(event) => {
+          setAutoRotate(false)
+          setRequest({ direction: event.currentTarget.value as CameraRequest['direction'] })
+        }}
+        className="absolute right-2 top-2 rounded border border-teal-300/35 bg-[#07121a] px-2 py-1 text-[11px] text-teal-100 focus-visible:outline focus-visible:outline-teal-300"
+      >
+        <option value="" disabled>{translate(lang, 'volume.direction')}</option>
+        {(Object.keys(DIRECTIONS) as CameraRequest['direction'][]).map((direction) => (
+          <option key={direction} value={direction}>{translate(lang, `volume.direction.${direction}`)}</option>
+        ))}
+      </select>
     </div>
   )
 }

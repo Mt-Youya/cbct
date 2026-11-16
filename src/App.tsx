@@ -65,7 +65,7 @@ async function collectDroppedFiles(dataTransfer: DataTransfer): Promise<File[]> 
   return out
 }
 
-const LAYOUT_ORDER: WorkspaceLayout[] = ['quad', 'mpr', '3d']
+const LAYOUT_ORDER: WorkspaceLayout[] = ['quad', 'mpr', '3d', 'panorama']
 
 export default function App() {
   const importFiles = useViewerStore((s) => s.importFiles)

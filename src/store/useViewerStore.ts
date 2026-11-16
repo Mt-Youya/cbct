@@ -1,14 +1,15 @@
 import { create } from 'zustand'
-import type { Cursor, DentalRoi, Lang, PresetId, VolumeData, VolumeMeta } from '../types'
+import type { Cursor, DentalRoi, Lang, MprAxis, PresetId, VolumeData, VolumeMeta } from '../types'
 import { defaultWindow, PRESET_BY_ID } from '../data/presets'
 import { fetchDentalRoi, fetchVolumeData, fetchVolumeMeta } from '../data/volumeLoader'
 import { importDicomFiles } from '../data/dicomImport'
+import { clampCursor } from '../data/mprRange'
 import type { ImportProgress } from '../data/dicomImport'
 import type { MessageKey } from '../i18n'
 
 type Status = 'idle' | 'loading' | 'ready' | 'error'
 
-export type WorkspaceLayout = 'quad' | 'mpr' | '3d'
+export type WorkspaceLayout = 'quad' | 'mpr' | '3d' | MprAxis | 'panorama' | 'dentalSection' | 'oblique'
 
 interface ViewerState {
   status: Status
@@ -35,6 +36,7 @@ interface ViewerState {
   windowCenter: number
   windowWidth: number
   cursor: Cursor
+  lockSliceRange: boolean
 
   layout: WorkspaceLayout
   settingsOpen: boolean
@@ -58,6 +60,7 @@ interface ViewerState {
   setShowGrid: (value: boolean) => void
   setWindow: (center: number, width: number) => void
   setCursor: (cursor: Partial<Cursor>) => void
+  setLockSliceRange: (locked: boolean) => void
   nudgeCursor: (axis: 'x' | 'y' | 'z', delta: number) => void
   toggleLeft: () => void
   toggleRight: () => void
@@ -69,10 +72,6 @@ interface ViewerState {
 }
 
 const initialPreset = PRESET_BY_ID.bone
-
-function clampInt(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, Math.round(value)))
-}
 
 /** Phones/tablets only show one overlay panel at a time. */
 function isNarrowViewport(): boolean {
@@ -117,6 +116,7 @@ export const useViewerStore = create<ViewerState>()((set, get) => ({
   windowCenter: 600,
   windowWidth: 2600,
   cursor: { x: 160, y: 160, z: 100 },
+  lockSliceRange: true,
 
   layout: 'quad',
   settingsOpen: false,
@@ -146,7 +146,7 @@ export const useViewerStore = create<ViewerState>()((set, get) => ({
         progress: 1,
         windowCenter: window.center,
         windowWidth: window.width,
-        cursor: { x: (w / 2) | 0, y: (h / 2) | 0, z: (d / 2) | 0 },
+        cursor: clampCursor(volume, { x: Math.floor(w / 2), y: Math.floor(h / 2), z: Math.floor(d / 2) }, get().lockSliceRange),
       })
     } catch (error) {
       set({
@@ -185,7 +185,7 @@ export const useViewerStore = create<ViewerState>()((set, get) => ({
         progress: 1,
         windowCenter: window.center,
         windowWidth: window.width,
-        cursor: { x: (w / 2) | 0, y: (h / 2) | 0, z: (d / 2) | 0 },
+        cursor: clampCursor(result.volume, { x: Math.floor(w / 2), y: Math.floor(h / 2), z: Math.floor(d / 2) }, get().lockSliceRange),
         teethOnly: false,
         presetId: 'bone',
         lastPreset: 'bone',
@@ -245,18 +245,19 @@ export const useViewerStore = create<ViewerState>()((set, get) => ({
   setShowGrid: (value) => set({ showGrid: value }),
   setWindow: (center, width) => set({ windowCenter: center, windowWidth: Math.max(1, width) }),
   setCursor: (cursor) => {
-    const volume = get().volume
+    const { volume, cursor: current, lockSliceRange } = get()
     if (!volume) return
-    const [w, h, d] = volume.dims
-    const current = get().cursor
-    set({
-      cursor: {
-        x: clampInt(cursor.x ?? current.x, 0, w - 1),
-        y: clampInt(cursor.y ?? current.y, 0, h - 1),
-        z: clampInt(cursor.z ?? current.z, 0, d - 1),
-      },
-    })
+    const next = clampCursor(volume, {
+      x: cursor.x ?? current.x,
+      y: cursor.y ?? current.y,
+      z: cursor.z ?? current.z,
+    }, lockSliceRange)
+    if (next.x !== current.x || next.y !== current.y || next.z !== current.z) set({ cursor: next })
   },
+  setLockSliceRange: (lockSliceRange) => set(({ volume, cursor }) => ({
+    lockSliceRange,
+    cursor: volume ? clampCursor(volume, cursor, lockSliceRange) : cursor,
+  })),
   nudgeCursor: (axis, delta) => {
     const cursor = get().cursor
     get().setCursor({ [axis]: cursor[axis] + delta } as Partial<Cursor>)

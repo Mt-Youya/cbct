@@ -44,6 +44,9 @@ export function ClinicalBar() {
   const setWindow = useViewerStore((s) => s.setWindow)
   const presetId = useViewerStore((s) => s.presetId)
   const setPreset = useViewerStore((s) => s.setPreset)
+  const layout = useViewerStore((s) => s.layout)
+  const lockSliceRange = useViewerStore((s) => s.lockSliceRange)
+  const setLockSliceRange = useViewerStore((s) => s.setLockSliceRange)
 
   if (!meta) {
     return (
@@ -72,6 +75,19 @@ export function ClinicalBar() {
       aria-label={`${translate(lang, 'toolbar.window')} · ${translate(lang, 'toolbar.render')}`}
       className="flex h-11 shrink-0 items-center gap-2 overflow-x-auto overflow-y-hidden border-b border-[#94a3b8]/15 bg-[#0a1118] px-3 [scrollbar-width:none] min-[900px]:gap-3 [&::-webkit-scrollbar]:hidden"
     >
+      {(layout === 'quad' || layout === 'mpr' || layout === 'axial' || layout === 'coronal' || layout === 'sagittal') && (
+        <label className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-[10px] text-[#9fb4c8]">
+          {translate(lang, 'mpr.range')}
+          <select
+            value={lockSliceRange ? 'locked' : 'full'}
+            onChange={(event) => setLockSliceRange(event.currentTarget.value === 'locked')}
+            className="h-6 rounded border border-teal-300/30 bg-[#07121a] px-1 text-teal-100 focus-visible:outline focus-visible:outline-teal-300"
+          >
+            <option value="locked">{translate(lang, 'mpr.range.locked')}</option>
+            <option value="full">{translate(lang, 'mpr.range.full')}</option>
+          </select>
+        </label>
+      )}
       <span className={`${SECTION_LABEL} max-[900px]:hidden`}>
         {translate(lang, 'toolbar.window')}
       </span>

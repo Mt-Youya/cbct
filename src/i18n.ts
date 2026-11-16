@@ -74,11 +74,37 @@ export type MessageKey =
   | 'layout.quad'
   | 'layout.mpr'
   | 'layout.3d'
+  | 'layout.panorama'
+  | 'layout.selector'
+  | 'layout.dentalSection'
+  | 'layout.oblique'
+  | 'section.position'
+  | 'section.pick'
+  | 'section.outer'
+  | 'section.inner'
+  | 'oblique.yaw'
+  | 'oblique.tilt'
+  | 'oblique.distance'
+  | 'volume.direction'
+  | 'volume.direction.free'
+  | 'volume.direction.front'
+  | 'volume.direction.back'
+  | 'volume.direction.left'
+  | 'volume.direction.right'
+  | 'volume.direction.top'
+  | 'volume.direction.bottom'
   | 'settings'
   | 'settings.title'
   | 'toolbar.window'
+  | 'mpr.range'
+  | 'mpr.range.locked'
+  | 'mpr.range.full'
   | 'toolbar.render'
   | 'pane.volume'
+  | 'panorama.reconstruction'
+  | 'panorama.thickness'
+  | 'panorama.offset'
+  | 'panorama.unavailable'
   | 'status.cursor'
   | 'status.window'
   | 'status.dataset'
@@ -181,11 +207,37 @@ const ZH: Record<MessageKey, string> = {
   'layout.quad': '2×2',
   'layout.mpr': '多平面',
   'layout.3d': '3D',
+  'layout.panorama': '牙弓全景',
+  'layout.selector': '阅片视图',
+  'layout.dentalSection': '牙弓横断面',
+  'layout.oblique': '自定义斜切',
+  'section.position': '沿牙弓位置',
+  'section.pick': '点击全景图定位横断面',
+  'section.outer': '唇/颊侧',
+  'section.inner': '舌/腭侧',
+  'oblique.yaw': '水平转角',
+  'oblique.tilt': '倾角',
+  'oblique.distance': '切面偏移',
+  'volume.direction': '3D 视角',
+  'volume.direction.free': '默认斜视',
+  'volume.direction.front': '前方',
+  'volume.direction.back': '后方',
+  'volume.direction.left': '患者左侧',
+  'volume.direction.right': '患者右侧',
+  'volume.direction.top': '上方',
+  'volume.direction.bottom': '下方',
   settings: '设置',
   'settings.title': '显示与渲染设置',
   'toolbar.window': '窗宽窗位',
+  'mpr.range': '层范围',
+  'mpr.range.locked': '锁定',
+  'mpr.range.full': '全部层',
   'toolbar.render': '渲染风格',
   'pane.volume': '3D 体渲染',
+  'panorama.reconstruction': 'CBCT 牙弓全景重建',
+  'panorama.thickness': '重建厚度',
+  'panorama.offset': '牙弓偏移',
+  'panorama.unavailable': '当前扫描无法自动定位完整牙弓。请打开包含上下牙弓的 CBCT 序列。',
   'status.cursor': '体素',
   'status.window': '窗宽窗位',
   'status.dataset': '体数据',
@@ -289,11 +341,37 @@ const EN: Record<MessageKey, string> = {
   'layout.quad': '2×2',
   'layout.mpr': 'MPR',
   'layout.3d': '3D',
+  'layout.panorama': 'Panorama',
+  'layout.selector': 'Imaging view',
+  'layout.dentalSection': 'Dental cross-section',
+  'layout.oblique': 'Oblique slice',
+  'section.position': 'Position along arch',
+  'section.pick': 'Select a point on the panorama to position the section',
+  'section.outer': 'Labial/buccal',
+  'section.inner': 'Lingual/palatal',
+  'oblique.yaw': 'Horizontal angle',
+  'oblique.tilt': 'Tilt',
+  'oblique.distance': 'Slice offset',
+  'volume.direction': '3D direction',
+  'volume.direction.free': 'Default oblique',
+  'volume.direction.front': 'Anterior',
+  'volume.direction.back': 'Posterior',
+  'volume.direction.left': 'Patient left',
+  'volume.direction.right': 'Patient right',
+  'volume.direction.top': 'Superior',
+  'volume.direction.bottom': 'Inferior',
   settings: 'Settings',
   'settings.title': 'Display & render settings',
   'toolbar.window': 'Window / level',
+  'mpr.range': 'Slice range',
+  'mpr.range.locked': 'Locked',
+  'mpr.range.full': 'All slices',
   'toolbar.render': 'Render look',
   'pane.volume': '3D Volume',
+  'panorama.reconstruction': 'CBCT panoramic reconstruction',
+  'panorama.thickness': 'Slab thickness',
+  'panorama.offset': 'Arch offset',
+  'panorama.unavailable': 'The dental arch could not be located automatically. Open a CBCT series that contains the upper and lower dental arches.',
   'status.cursor': 'Voxel',
   'status.window': 'Window',
   'status.dataset': 'Volume',
